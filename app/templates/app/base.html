@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baitul Admin - {% block title %}{% endblock %}</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #27ae60;
+        }
+        
+        .sidebar {
+            background-color: var(--primary-color);
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 0.8rem 1rem;
+            margin: 0.2rem 0;
+            border-radius: 0.5rem;
+        }
+        
+        .sidebar .nav-link:hover {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+        
+        .sidebar .nav-link.active {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .main-content {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            background-color: white;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .btn-primary {
+            background-color: var(--accent-color);
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background-color: #219a52;
+        }
+        
+        .stats-card {
+            transition: transform 0.3s;
+        }
+        
+        .stats-card:hover {
+            transform: translateY(-5px);
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 px-0 sidebar">
+                <div class="d-flex flex-column p-3">
+                    <a href="{% url 'dashboard' %}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                        <i class="fas fa-mosque fa-2x me-2"></i>
+                        <span class="fs-4">Baitul Admin</span>
+                    </a>
+                    <hr>
+                    <ul class="nav nav-pills flex-column mb-auto">
+                        <li class="nav-item">
+                            <a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+                                <i class="fas fa-home me-2"></i>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'video_list' %}" class="nav-link {% if 'video' in request.path %}active{% endif %}">
+                                <i class="fas fa-video me-2"></i>
+                                Videos
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'book_list' %}" class="nav-link {% if 'book' in request.path %}active{% endif %}">
+                                <i class="fas fa-book me-2"></i>
+                                Books
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'poster_list' %}" class="nav-link {% if 'poster' in request.path %}active{% endif %}">
+                                <i class="fas fa-image me-2"></i>
+                                Posters
+                            </a>
+                        </li>
+                    </ul>
+                    <hr>
+                    <div class="dropdown">
+                        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle fa-2x me-2"></i>
+                            <strong>{{ request.user.username }}</strong>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+                            <li><a class="dropdown-item" href="{% url 'admin:index' %}">Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'admin:logout' %}">Sign out</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    {% block extra_js %}{% endblock %}
+</body>
+</html> 

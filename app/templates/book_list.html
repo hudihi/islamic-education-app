@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% block title %}Books{% endblock %}
+
+{% block extra_css %}
+<style>
+    .book-card {
+        transition: transform 0.2s;
+        position: relative;
+    }
+    .book-card:hover {
+        transform: translateY(-5px);
+    }
+    .book-cover {
+        height: 250px;
+        object-fit: cover;
+        border-radius: 0.5rem;
+    }
+    .book-description {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .card-actions {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        display: flex;
+        gap: 0.25rem;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+    .book-card:hover .card-actions {
+        opacity: 1;
+    }
+    .btn-icon {
+        width: 2rem;
+        height: 2rem;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.9);
+        border: none;
+        transition: all 0.3s;
+    }
+    .btn-icon:hover {
+        transform: scale(1.1);
+    }
+    .btn-delete {
+        color: #e74c3c;
+    }
+    .btn-delete:hover {
+        background-color: #e74c3c;
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Books</h1>
+        <a href="{% url 'upload_book' %}" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Upload Book
+        </a>
+    </div>
+
+    {% if messages %}
+    <div class="row mb-4">
+        <div class="col">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Books Grid -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4">
+        {% for book in books %}
+        <div class="col">
+            <div class="card h-100 book-card">
+                <img src="{{ book.image.url }}" class="card-img-top book-cover" alt="{{ book.title }}">
+                <!-- Card Actions -->
+                <div class="card-actions">
+                    <button class="btn btn-icon btn-delete" onclick="confirmDelete('book', {{ book.id }}, '{{ book.title|escapejs }}')">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ book.title }}</h5>
+                    <p class="card-text book-description">{{ book.description }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            <i class="fas fa-clock me-1"></i>{{ book.created_at|date:"M d, Y" }}
+                        </small>
+                        <a href="{{ book.file.url }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                            <i class="fas fa-book-reader me-1"></i>Read
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="text-center py-5">
+                <i class="fas fa-book mb-3" style="font-size: 3rem; color: #ccc;"></i>
+                <h4 class="text-muted">No books uploaded yet</h4>
+                <p class="text-muted">Click the "Upload Book" button to add your first book.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete "<span id="deleteItemName"></span>"?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteForm" method="POST" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function confirmDelete(type, id, name) {
+    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    document.getElementById('deleteItemName').textContent = name;
+    document.getElementById('deleteForm').action = `/${type}s/${id}/delete/`;
+    modal.show();
+}
+</script>
+{% endblock %} 

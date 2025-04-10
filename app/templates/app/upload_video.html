@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Video{% endblock %}
+
+{% block extra_css %}
+<style>
+    .preview-image {
+        max-height: 200px;
+        width: 100%;
+        object-fit: cover;
+        border-radius: 0.5rem;
+    }
+    .file-upload {
+        position: relative;
+        display: inline-block;
+        width: 100%;
+    }
+    .file-upload input[type="file"] {
+        display: none;
+    }
+    .file-upload-label {
+        border: 2px dashed #ccc;
+        border-radius: 0.5rem;
+        padding: 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .file-upload-label:hover {
+        border-color: var(--accent-color);
+    }
+    .upload-icon {
+        font-size: 2rem;
+        color: #666;
+        margin-bottom: 1rem;
+    }
+    .progress {
+        height: 0.5rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Upload Video</h1>
+        <a href="{% url 'video_list' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Back to Videos
+        </a>
+    </div>
+
+    <!-- Upload Form -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data" id="uploadForm">
+                        {% csrf_token %}
+                        
+                        <!-- Title -->
+                        <div class="mb-4">
+                            <label for="title" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="title" name="title" required>
+                        </div>
+
+                        <!-- Category -->
+                        <div class="mb-4">
+                            <label for="category" class="form-label">Category</label>
+                            <select class="form-select" id="category" name="category" required>
+                                {% for value, label in categories %}
+                                    <option value="{{ value }}">{{ label }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Thumbnail Upload -->
+                        <div class="mb-4">
+                            <label class="form-label">Thumbnail</label>
+                            <div class="file-upload">
+                                <input type="file" id="image" name="image" accept="image/*" required onchange="previewImage(this)">
+                                <label for="image" class="file-upload-label w-100">
+                                    <div id="imagePreviewContainer" class="d-none">
+                                        <img id="imagePreview" class="preview-image mb-3">
+                                    </div>
+                                    <div id="imageUploadPrompt">
+                                        <i class="fas fa-image upload-icon"></i>
+                                        <p class="mb-0">Click to upload thumbnail<br><small class="text-muted">JPG, PNG or GIF (Max. 5MB)</small></p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Video Upload -->
+                        <div class="mb-4">
+                            <label class="form-label">Video File</label>
+                            <div class="file-upload">
+                                <input type="file" id="video" name="file" accept="video/*" required onchange="updateVideoLabel(this)">
+                                <label for="video" class="file-upload-label w-100">
+                                    <i class="fas fa-video upload-icon"></i>
+                                    <p class="mb-0" id="videoLabel">Click to upload video<br><small class="text-muted">MP4 or WebM (Max. 500MB)</small></p>
+                                </label>
+                            </div>
+                            <div class="progress mt-2 d-none" id="uploadProgress">
+                                <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="text-end">
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                <i class="fas fa-cloud-upload-alt me-2"></i>Upload Video
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function previewImage(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('imagePreview').src = e.target.result;
+            document.getElementById('imagePreviewContainer').classList.remove('d-none');
+            document.getElementById('imageUploadPrompt').classList.add('d-none');
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function updateVideoLabel(input) {
+    if (input.files && input.files[0]) {
+        const fileName = input.files[0].name;
+        const fileSize = (input.files[0].size / (1024 * 1024)).toFixed(2);
+        document.getElementById('videoLabel').innerHTML = `Selected: ${fileName}<br><small class="text-muted">Size: ${fileSize} MB</small>`;
+    }
+}
+
+document.getElementById('uploadForm').addEventListener('submit', function(e) {
+    const submitBtn = document.getElementById('submitBtn');
+    const progress = document.getElementById('uploadProgress');
+    
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Uploading...';
+    progress.classList.remove('d-none');
+    
+    // Simulate upload progress (replace with actual upload progress in production)
+    let width = 0;
+    const interval = setInterval(() => {
+        width += 5;
+        progress.querySelector('.progress-bar').style.width = width + '%';
+        if (width >= 100) clearInterval(interval);
+    }, 200);
+});
+</script>
+{% endblock %}

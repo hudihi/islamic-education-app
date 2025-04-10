@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title%}{% endblock %}</title>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+</head>
+<body>
+    <div class="container">
+        <ul class="nav bg-info">
+            <li class="nav-item">
+                <a class="nav-link link-light" href="/app/upload_posters">POSTERS</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link link-light" href="/app/upload_book">BOOK</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link link-light" href="/app/upload_video">
+                    VIDEO
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link link-light" href="/app/upload_multiple_items">Multiple</a>
+            </li>
+        </ul>
+        {% block content %}
+        {% endblock %}
+    </div>
+    <footer>
+        <div class="text-center p-3" style="background-color: rgba(0,0,0,0.05);">
+            &copy; 2024 Copyright:
+        </div>
+    </footer>
+
+</body>
+</html>

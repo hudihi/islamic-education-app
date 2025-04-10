@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Baitul Admin</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #27ae60;
+        }
+        
+        body {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-container {
+            max-width: 400px;
+            width: 90%;
+            padding: 2rem;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            text-align: center;
+            border-radius: 1rem 1rem 0 0 !important;
+            padding: 2rem;
+        }
+        
+        .logo-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--accent-color);
+            border: none;
+            padding: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .btn-primary:hover {
+            background-color: #219a52;
+        }
+        
+        .form-control:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.25rem rgba(39, 174, 96, 0.25);
+        }
+        
+        .alert {
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-mosque logo-icon"></i>
+                <h4 class="mb-0">Baitul Admin</h4>
+            </div>
+            <div class="card-body p-4">
+                {% if form.errors %}
+                <div class="alert alert-danger" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    Please enter a correct username and password.
+                </div>
+                {% endif %}
+
+                {% if next %}
+                    {% if user.is_authenticated %}
+                    <div class="alert alert-warning" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Your account doesn't have access to this page.
+                    </div>
+                    {% endif %}
+                {% endif %}
+
+                <form method="post" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-user"></i></span>
+                            <input type="text" name="username" class="form-control" id="username" required>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="password" class="form-label">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                            <input type="password" name="password" class="form-control" id="password" required>
+                        </div>
+                    </div>
+                    <input type="hidden" name="next" value="{{ next }}">
+                    <button type="submit" class="btn btn-primary w-100 mb-3">
+                        <i class="fas fa-sign-in-alt me-2"></i>Log In
+                    </button>
+                    
+                    <div class="text-center">
+                        <p class="mb-0">Don't have an account? <a href="{% url 'register' %}" class="text-decoration-none">Register here</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 
