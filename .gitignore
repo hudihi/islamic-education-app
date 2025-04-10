@@ -68,3 +68,5 @@ log/
 # Unit test / coverage reports
 .pytest_cache/
 db.sqlite3
+
+baitul_env/
